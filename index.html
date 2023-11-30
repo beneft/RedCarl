@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RedCarl</title>
+  <link rel="stylesheet" href="css/custom.css">
+  <link rel="stylesheet" href="./css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="./js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="./js/internal.js"></script>
+</head>
+<body class="bg-success d-flex flex-column justify-content-between">
+  <header class="row d-flex justify-content-between ps-4">
+    <span id="winrate" class="col-4">winrate</span>
+    <span id="money" class="col-4">$$$$$$</span>
+    <span id="settings" class="col-1"><i class="fa fa-gear"></i></span>
+  </header>
+  <div class="d-flex justify-content-center gap-1" id="dealer">
+
+  </div>
+  <div class="total">
+    <span id="dtotal">21 - RedCarl - 21</span>
+  </div>
+  <div class="total">
+    <span id="total"></span>
+  </div>
+  <div class="d-flex justify-content-center gap-1" id="player">
+
+  </div>
+  <footer class="container d-none" id="controls">
+    <div class="row d-flex justify-content-between my-2">
+      <button class="btn btn-secondary col-3" id="hit">Hit</button>
+      <button class="btn btn-danger col-3" id="double">Double</button>
+      <button class="btn btn-warning col-3" id="insurance">Insurance</button>
+    </div>
+    <div class="row d-flex justify-content-between my-2">
+      <button class="btn btn-primary col-3" id="stand">Stand</button>
+      <button class="btn btn-light col-3" id="split">Split</button>
+      <button class="btn btn-info col-3" id="surr">Surrender</button>
+    </div>
+  </footer>
+  <footer class="container" id="betbox">
+    <div class="d-flex justify-content-center my-2 py-4" id="bets">
+        <input type="number" id="mainbet">
+        <label for="mainbet" class="text-light ms-1">Main bet</label>
+    </div>
+      <div class="d-flex justify-content-center mb-3">
+        <button class="btn btn-light rounded-pill" id="start" disabled>Bet</button>
+      </div>
+  </footer>
+</body>
+</html>
