@@ -229,9 +229,19 @@ $(document).ready(function (){
 
     })
     $('#continue').click(function(){
-        $('#peekbox').addClass('d-none');
-        $('#controls').removeClass('d-none');
-        $('#surr').prop('disabled',true);
+        if (peek()){
+            $('#dealer').children().last().attr('src','./img/decks/default/'+$('#dealer').children().last().data().name+'.png');
+            bank = 0;
+            games++;
+            dealersTotal();
+            $('#winrate').text(Math.floor(wins*100/games));
+            $('#betbox').removeClass('d-none');
+            $('#peekbox').addClass('d-none');
+        } else {
+            $('#peekbox').addClass('d-none');
+            $('#controls').removeClass('d-none');
+            $('#surr').prop('disabled',true);
+        }
     })
     $('#surr').click(function(){
         surr = true;
