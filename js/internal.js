@@ -1,10 +1,12 @@
 $(document).ready(function (){
     var bank = 0;
+    var insur = 0;
     var wins = 0;
     var games = 0;
     var surr = false;
     var playerBJ = false;
     var dealerBJ = false;
+    var peeking = false;
     $('#money').text(1000);
     $('#winrate').text('100%');
     let deck = [];
@@ -92,11 +94,12 @@ $(document).ready(function (){
         surr=false;
         playerBJ=false;
         dealerBJ=false;
+        peeking = false;
         $('#money').text($('#money').text()-bank);
         $('#surr').prop('disabled',false);
         $('#double').prop('disabled',false);
         $('#split').prop('disabled',true);
-        $('#insurance').prop('disabled',true);
+        $('#even').prop('disabled',true);
         $('#betbox').addClass('d-none');
         $('#controls').removeClass('d-none');
         reshuffle();
@@ -104,17 +107,22 @@ $(document).ready(function (){
     })
     function drawCard(target){
         let card = decks.pop();
-        $('<span>',{text:card.name,data:card}).appendTo(target);
+        $('<img>',{height:100,width:70,src:'./img/decks/default/'+card.name+'.png',data:card}).appendTo(target);
     }
     function drawCard_hidden(){
         let card = decks.pop();
-        $('<span>',{text:'hidden',data:card}).appendTo('#dealer');
+        $('<img>',{height:100,width:70,src:'./img/decks/default/back.png',data:card}).appendTo('#dealer');
     }
     function flop(){
         drawCard('#player');
         drawCard('#dealer');
         drawCard('#player');
         drawCard_hidden();
+        if (detectUpperCard(11)) {
+            $('#controls').addClass('d-none');
+            $('#peekbox').removeClass('d-none');
+            peeking = true;
+        }
         sumTotal();
     }
     function sumTotal(){
@@ -132,9 +140,13 @@ $(document).ready(function (){
                 $('#betbox').removeClass('d-none');
                 $('#controls').addClass('d-none');
             }
-            if (parseInt($('#total').text()) === 21) {
+            if (parseInt($('#total').text()) === 21 && !peeking) {
                 if (detectBJ('#player','#total')) playerBJ=true;
                 dealersTurn();
+            }
+            if (peeking){
+                if (detectBJ('#player','#total')) playerBJ=true;
+                if (playerBJ) $('#even').prop('disabled',false);
             }
         }
     }
@@ -165,11 +177,17 @@ $(document).ready(function (){
         }
         return result;
     }
+    function detectUpperCard(value){
+        let result = false;
+        if ($('#dealer').children().first().data().value===value){
+            result = true;
+        }
+        return result;
+    }
     $('#hit').click(function (){
         $('#surr').prop('disabled',true);
         $('#double').prop('disabled',true);
         $('#split').prop('disabled',true);
-        $('#insurance').prop('disabled',true);
         drawCard('#player');
         sumTotal();
     })
@@ -187,7 +205,33 @@ $(document).ready(function (){
 
     })
     $('#insurance').click(function(){
+        insur = bank/2;
+        if (peek()){
+            $('#dealer').children().last().attr('src','./img/decks/default/'+$('#dealer').children().last().data().name+'.png');
+            $('#money').text(parseInt($('#money').text()) + insur*3);
+            insur = 0;
+            bank = 0;
+            games++;
+            dealersTotal();
+            $('#winrate').text(Math.floor(wins*100/games));
+            $('#betbox').removeClass('d-none');
+            $('#peekbox').addClass('d-none');
+        } else {
+            bank = 0;
+            insur = 0;
+            $('#money').text(parseInt($('#money').text()) - insur);
+            $('#peekbox').addClass('d-none');
+            $('#controls').removeClass('d-none');
+            $('#surr').prop('disabled',true);
+        }
+    })
+    $('#even').click(function(){
 
+    })
+    $('#continue').click(function(){
+        $('#peekbox').addClass('d-none');
+        $('#controls').removeClass('d-none');
+        $('#surr').prop('disabled',true);
     })
     $('#surr').click(function(){
         surr = true;
@@ -195,11 +239,22 @@ $(document).ready(function (){
         bank = Math.ceil(bank/2);
         dealersTurn();
     })
+    function peek(){
+        let result = false;
+        let sum = 0;
+        $('#dealer').children().each(function(){
+            sum += $(this).data().value;
+        })
+        if (sum===21){
+            result = true;
+        }
+        return result;
+    }
     function dealersTurn(){
         let sum = 0;
         $('#dealer').children().each(function(){
-          if ($(this).text()==='hidden') {
-              $(this).text($(this).data().name);
+          if ($(this).attr('src')==='./img/decks/default/back.png') {
+              $(this).attr('src','./img/decks/default/'+$(this).data().name+'.png');
           }
           sum += $(this).data().value;
         })
