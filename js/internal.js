@@ -91,6 +91,7 @@ $(document).ready(function (){
         $('#player').empty();
         $('#dealer').empty();
         bank = $('#mainbet').val();
+        insur = 0;
         surr=false;
         playerBJ=false;
         dealerBJ=false;
@@ -123,6 +124,8 @@ $(document).ready(function (){
             $('#peekbox').removeClass('d-none');
             peeking = true;
         }
+        if ($('#player').children().first().data().value===$('#player').children().last().data().value)
+            $('#split').prop('disabled',false);
         sumTotal();
     }
     function sumTotal(){
@@ -153,7 +156,7 @@ $(document).ready(function (){
     function checkAce(){
         let result = false;
         $('#player').children().each(function(){
-            if ($(this).data().value===11&&parseInt($('#total').text())>21){
+            if ($(this).data().value===11&&parseInt($('#total').text())>21&&!result){
                 let tmp = $(this).data().value;
                 $(this).data().value = $(this).data().subvalue;
                 $(this).data().subvalue = tmp;
@@ -161,7 +164,7 @@ $(document).ready(function (){
             }
         })
         $('#dealer').children().each(function(){
-            if ($(this).data().value===11&&parseInt($('#dtotal').text())>21){
+            if ($(this).data().value===11&&parseInt($('#dtotal').text())>21&&!result){
                 let tmp = $(this).data().value;
                 $(this).data().value = $(this).data().subvalue;
                 $(this).data().subvalue = tmp;
@@ -202,13 +205,19 @@ $(document).ready(function (){
         dealersTurn();
     })
     $('#split').click(function(){
-
+        $('#double').prop('disabled',true);
+        $('#surr').prop('disabled',true);
+        $('#money').text($('#money').text()-bank);
     })
     $('#insurance').click(function(){
-        insur = bank/2;
+        insur = Math.ceil(bank/2);
         if (peek()){
             $('#dealer').children().last().attr('src','./img/decks/default/'+$('#dealer').children().last().data().name+'.png');
-            $('#money').text(parseInt($('#money').text()) + insur*3);
+            $('#money').text(parseInt($('#money').text()) + insur*2);
+            if (playerBJ) {
+                $('#money').text(parseInt($('#money').text()) + bank);
+                games--;
+            }
             insur = 0;
             bank = 0;
             games++;
@@ -217,20 +226,32 @@ $(document).ready(function (){
             $('#betbox').removeClass('d-none');
             $('#peekbox').addClass('d-none');
         } else {
+            $('#money').text(parseInt($('#money').text()) - insur);
             bank = 0;
             insur = 0;
-            $('#money').text(parseInt($('#money').text()) - insur);
             $('#peekbox').addClass('d-none');
             $('#controls').removeClass('d-none');
             $('#surr').prop('disabled',true);
         }
     })
     $('#even').click(function(){
-
+        $('#dealer').children().last().attr('src','./img/decks/default/'+$('#dealer').children().last().data().name+'.png');
+        $('#money').text(parseInt($('#money').text()) + bank*2);
+        bank = 0;
+        wins++;
+        games++;
+        dealersTotal();
+        $('#winrate').text(Math.floor(wins*100/games));
+        $('#betbox').removeClass('d-none');
+        $('#peekbox').addClass('d-none');
     })
     $('#continue').click(function(){
         if (peek()){
             $('#dealer').children().last().attr('src','./img/decks/default/'+$('#dealer').children().last().data().name+'.png');
+            if (playerBJ) {
+                $('#money').text(parseInt($('#money').text()) + bank);
+                games--;
+            }
             bank = 0;
             games++;
             dealersTotal();
