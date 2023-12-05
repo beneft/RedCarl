@@ -259,9 +259,22 @@ $(document).ready(function (){
             $('#betbox').removeClass('d-none');
             $('#peekbox').addClass('d-none');
         } else {
-            $('#peekbox').addClass('d-none');
-            $('#controls').removeClass('d-none');
-            $('#surr').prop('disabled',true);
+            if (playerBJ) {
+                $('#dealer').children().last().attr('src','./img/decks/default/'+$('#dealer').children().last().data().name+'.png');
+                bank=Math.floor(1.5*bank)+bank;
+                $('#money').text(parseInt($('#money').text()) + bank);
+                dealersTotal();
+                wins++;
+                games++;
+                bank=0;
+                $('#winrate').text(Math.floor(wins*100/games));
+                $('#betbox').removeClass('d-none');
+                $('#peekbox').addClass('d-none');
+            } else {
+                $('#peekbox').addClass('d-none');
+                $('#controls').removeClass('d-none');
+                $('#surr').prop('disabled', true);
+            }
         }
     })
     $('#surr').click(function(){
